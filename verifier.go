@@ -12,8 +12,12 @@ type CustomClaims struct {
 }
 
 func VerifyJwt(tokenString string, pubK []byte) (*CustomClaims, error) {
+	pk,err := jwt.ParseRSAPublicKeyFromPEM(pubK)
+	if err != nil {
+		return nil, err
+	}
 	token, err := jwt.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return jwt.ParseRSAPublicKeyFromPEM(pubK), nil
+		return pk, nil
 	})
 	if err != nil {
 		return nil, err
